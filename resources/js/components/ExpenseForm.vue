@@ -52,7 +52,7 @@
               />
             </div>
             <div class="mb-4 flex items-center justify-center">
-              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <button class="bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
                 Add Expense
               </button>
             </div>
@@ -76,7 +76,19 @@ export default {
       categories: [],
     };
   },
+   mounted() {
+    this.fetchCategories();
+  },
   methods: {
+    async fetchCategories() {
+      try {
+        const response = await axios.get('/fetch-categories');
+        this.categories = response.data;
+        console.log(this.categories)
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    },
     submitForm() {
       console.log("Form submitted");
       console.log(this.formData); // Access form data here for further processing
