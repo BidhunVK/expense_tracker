@@ -1,7 +1,7 @@
 <template>
- <div class="container">
+<div class="container">
     <div class="row justify-content-center">
-      <div class="col-md-6">
+      <div class="col-md-12 sm:col-md-6">
         <div class="max-w-xs p-6 bg-white rounded-lg shadow-md">
           <h2 class="text-2xl font-bold mb-6 text-gray-700 text-center">Add Expense</h2>
           <form @submit.prevent="submitForm">
@@ -11,7 +11,8 @@
                 id="category"
                 v-model="formData.category_id"
                 required
-                class="block w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                :class="{ 'border-red-500': errors.category_id }"
+                class="w-full sm:w-1/2 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Select a category</option>
                 <option
@@ -22,24 +23,29 @@
                   {{ category.category }}
                 </option>
               </select>
+               <span v-if="errors.category_id" class="text-red-500 text-sm">{{ errors.category_id[0] }}</span>
             </div>
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-medium mb-2" for="amount">Amount:</label>
               <input
-                class="block w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                class="w-full sm:w-1/2 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 type="number"
                 id="amount"
                 v-model="formData.amount"
                 required
+                :class="{ 'border-red-500': errors.amount }"
               />
+              <span v-if="errors.amount" class="text-red-500 text-sm">
             </div>
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-medium mb-2" for="description">Description:</label>
               <textarea
-                class="block w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                class="w-full sm:w-1/2 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 id="description"
                 v-model="formData.description"
+                :class="{ 'border-red-500': errors.description }"
               ></textarea>
+              <span v-if="errors.description" class="text-red-500 text-sm">
             </div>
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-medium mb-2" for="date">Date of Expense:</label>
@@ -48,8 +54,10 @@
                 id="date"
                 v-model="formData.date_of_expense"
                 required
-                class="block w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                class="w-full sm:w-1/2 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                :class="{ 'border-red-500': errors.date_of_expense }"
               />
+              <span v-if="errors.date_of_expense" class="text-red-500 text-sm">
             </div>
             <div class="mb-4 flex items-center justify-center">
               <button class="bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
@@ -74,6 +82,7 @@ export default {
         date_of_expense: "",
       },
       categories: [],
+      errors:{}
     };
   },
    mounted() {
@@ -84,14 +93,25 @@ export default {
       try {
         const response = await axios.get('/fetch-categories');
         this.categories = response.data;
-        console.log(this.categories)
       } catch (error) {
         console.error('Error fetching categories:', error);
       }
     },
-    submitForm() {
-      console.log("Form submitted");
-      console.log(this.formData); // Access form data here for further processing
+
+    async submitForm() {
+      try{
+         this.errors = {};
+        const response = await axios.post('/expense/store', this.formData);
+         router.push('/dashboard');
+      }
+      catch(error){
+          if (error.response.status === 422) {
+          this.errors = error.response.data.errors;
+        } else {
+          console.error('Error submitting form:', error);
+        }
+      }
+      
     },
   },
 };
