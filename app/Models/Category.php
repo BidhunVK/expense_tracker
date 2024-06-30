@@ -9,5 +9,8 @@ class Category extends Model
 {
     use HasFactory;
 
-    
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
 }

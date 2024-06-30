@@ -15,4 +15,8 @@ class Expense extends Model
         'description',
         'date_of_expense'
     ];
+
+    public function category(){
+        return $this->belongsTo(Category::class , 'category_id');
+    }
 }

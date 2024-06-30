@@ -6,15 +6,20 @@ use Illuminate\Http\Request;
 use App\Models\Expense;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log; 
 
 class ExpenseController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+
+        $expenses = Expense::with('category')->where('date_of_expense' , '>=' , $start_date)->where('date_of_expense' , '<=' , $end_date)->get();
+        return response()->json($expenses);
     }
 
     /**
