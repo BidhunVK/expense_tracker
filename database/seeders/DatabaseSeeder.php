@@ -18,9 +18,11 @@ class DatabaseSeeder extends Seeder
 
         Category::factory()->count(12)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
+
+        \App\Models\Expense::factory(20)->create();
     }
 }
