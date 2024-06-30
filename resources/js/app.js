@@ -9,9 +9,7 @@ Alpine.start();
 import { createApp } from 'vue/dist/vue.esm-bundler';
 import ExpenseForm from './components/ExpenseForm.vue';
 
-const app = createApp({
-    // App setup
-});
+const app = createApp();
 
 app.component('ExpenseForm', ExpenseForm);
 

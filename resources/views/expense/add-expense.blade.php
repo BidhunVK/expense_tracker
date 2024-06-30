@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 <div id="app">
-    <expense-form></expense-form>
+    <expense-form :csrf-token="{{ json_encode(csrf_token()) }}"></expense-form>
 </div>
 @endsection
 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Expense;
 
+use Illuminate\Support\Facades\Auth;
+
 class ExpenseController extends Controller
 {
     /**
@@ -36,14 +38,14 @@ class ExpenseController extends Controller
         ]);
 
          Expense::create([
+            'user_id' => Auth::id(),
             'category_id' => $validatedData['category_id'],
             'amount' => $validatedData['amount'],
             'description' => $validatedData['description'],
             'date_of_expense' => $validatedData['date_of_expense'],
         ]);
 
-        // Optionally, return response or success message
-        return response()->json(['message' => 'Expense saved successfully'], 200);
+        return ['redirect' => route('dashboard')];
     }
 
     /**
