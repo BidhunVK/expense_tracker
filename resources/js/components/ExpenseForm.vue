@@ -41,7 +41,6 @@
               >
               <input
                 class="w-full sm:w-1/2 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                type="number"
                 id="amount"
                 v-model="formData.amount"
                 :class="{ 'border-red-500': errors.amount }"
@@ -90,7 +89,7 @@
               <button
                 class="bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
               >
-                Add Expense
+                {{ buttonText === 'add' ? 'Add Expense' : 'Update' }}
               </button>
             </div>
           </form>
@@ -102,6 +101,20 @@
 
 <script>
 export default {
+  props : {
+     expenseToBeEdited: {
+      type: Object,
+      default: null
+    },
+     buttonText: {
+      type: String,
+      required: true,
+    },
+     csrfToken: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       formData: {
@@ -109,6 +122,7 @@ export default {
         amount: null,
         description: "",
         date_of_expense: "",
+         _token:"",
       },
       categories: [],
       errors: {},
@@ -116,6 +130,15 @@ export default {
   },
   mounted() {
     this.fetchCategories();
+
+    if (this.$props.expenseToBeEdited) {
+    // this.expenseToBeEdited = this.$props.expenseToBeEdited;
+    this.formData.category_id = this.expenseToBeEdited.category_id;
+    this.formData.amount = this.expenseToBeEdited.amount;
+    this.formData.description = this.expenseToBeEdited.description;
+    this.formData.date_of_expense = this.expenseToBeEdited.date_of_expense;
+  }
+
   },
   methods: {
     async fetchCategories() {
@@ -140,6 +163,9 @@ export default {
         if (!this.formData.amount) {
           this.errors.amount = ["Please enter the amount."];
         }
+         if (this.formData.amount <= 0 || isNaN(this.formData.amount)) {
+          this.errors.amount = ["Please enter a valid amount."];
+        }
         if (this.formData.description.length > 200) {
           this.errors.description = ["Description should be less than 200 characters"];
         }
@@ -151,9 +177,17 @@ export default {
           return;
         }
 
-        const response = await axios.post("/expense", this.formData).then(function(response){
+        let response;
+        if (this.buttonText === 'add') {
+          response = await axios.post("/expense", this.formData);
+        } else if (this.buttonText === 'edit' && this.expenseToBeEdited) {
+          const url = `/expense/${this.expenseToBeEdited.id}`;
+          response = await axios.put(url, this.formData);
+        }
+
+        if (response && response.data && response.data.redirect) {
           window.location = response.data.redirect;
-        })
+        }
 
       } catch (error) {
         if (error.response && error.response.status === 422) {
