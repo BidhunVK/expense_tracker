@@ -158,12 +158,14 @@
           v-if="modalData.action === 'add'"
           :button-text="'add'"
           :csrf-token="csrfToken"
+          :categories-fetched="categories"
         />
         <ExpenseForm
           v-else-if="modalData.action === 'edit'"
           :expense-to-be-edited="modalData.expense"
           :button-text="'edit'"
           :csrf-token="csrfToken"
+          :categories-fetched="categories"
         />
       </div>
     </div>
@@ -194,11 +196,14 @@ export default {
       },
       categoryWiseExpenses: {},
       chartKey: 0,
+      categories:[],
     };
   },
   methods: {
     fetchExpenses() {
       // Assuming you're using Axios for HTTP requests
+      //  const auth_token = sessionStorage.getItem('auth_token');
+      //  alert(auth_token);
       axios
         .get("/expense", {
           params: {
@@ -219,6 +224,17 @@ export default {
           console.error("Error fetching expenses:", error);
         });
     },
+
+     async fetchCategories() {
+      try {
+        const response = await axios.get("/fetch-categories");
+        this.categories = response.data;
+        // console.log(this.categories);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    },
+
 
     fetchLatestMonthExpenses() {
       const currentDate = new Date();
@@ -317,6 +333,7 @@ export default {
   },
   mounted() {
     this.fetchLatestMonthExpenses();
+    this.fetchCategories();
     // alert(this.csrfToken);
     this.csrfToken = document.head.querySelector(
       'meta[name="csrf-token"]'

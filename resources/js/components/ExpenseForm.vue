@@ -114,6 +114,9 @@ export default {
       type: String,
       required: true,
     },
+    categoriesFetched:{
+      type:Array,
+    }
   },
   data() {
     return {
@@ -129,10 +132,9 @@ export default {
     };
   },
   mounted() {
-    this.fetchCategories();
+    this.categories = this.categoriesFetched
 
     if (this.$props.expenseToBeEdited) {
-      // this.expenseToBeEdited = this.$props.expenseToBeEdited;
       this.formData.category_id = this.expenseToBeEdited.category_id;
       this.formData.amount = this.expenseToBeEdited.amount;
       this.formData.description = this.expenseToBeEdited.description;
@@ -140,15 +142,6 @@ export default {
     }
   },
   methods: {
-    async fetchCategories() {
-      try {
-        const response = await axios.get("/fetch-categories");
-        this.categories = response.data;
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    },
-
     async submitForm() {
       try {
         this.errors = {};

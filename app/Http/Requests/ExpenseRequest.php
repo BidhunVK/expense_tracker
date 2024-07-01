@@ -25,7 +25,11 @@ class ExpenseRequest extends FormRequest
             'category_id' => 'required|integer',
             'amount' => 'required|numeric|gt:0',
             'description' => 'nullable|string',
-            'date_of_expense' => 'required|date',
+           'date_of_expense' => [
+                'required',
+                'date',
+                'before_or_equal:' . now()->format('Y-m-d'),
+            ],
         ];
     }
 }
