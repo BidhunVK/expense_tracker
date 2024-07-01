@@ -62,8 +62,8 @@ export default {
         ],
       },
       chartOptions: {
-        responsive: true,
-        maintainAspectRatio: true,
+        responsive: false,
+        maintainAspectRatio: false,
         scales: {
           x: { grid: { display: false } },
           y: { grid: { display: false } },
@@ -80,17 +80,15 @@ export default {
     this.chartData.labels = labels;
     this.chartData.datasets[0].data = amounts;
     this.chartData.datasets[0].backgroundColor = colors;
-    // this.$refs.chart.update();
   }
   },
   mounted(){
     console.log(this.$props);
     // this.categoryWiseExpenses = this.$props.categoryWiseExpenses;
-    this.updateChartData(this.categoryWiseExpenses);
+    // this.updateChartData(this.categoryWiseExpenses);
   }
 };
 </script>
 
-<style scoped>
-/* Scoped styles for the component */
+<style>
 </style>
