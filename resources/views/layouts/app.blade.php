@@ -32,6 +32,9 @@
                 @yield('content')
                 {{-- {{ $slot }} --}}
             </main>
+            <footer class="text-center text-sm text-gray-500 py-4">
+                &copy; {{ now()->year }} Expense Tracker. All rights reserved.
+            </footer>
         </div>
         @yield('script')
     </body>

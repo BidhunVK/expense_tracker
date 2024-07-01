@@ -1,7 +1,7 @@
 <template>
   <div class="p-6">
     <h2 class="text-xl font-semibold mb-4">Expense List</h2>
-
+    <BarChart :category-wise-expenses="categoryWiseExpenses" :key="chartKey"/>
     <!-- Date Range Picker -->
     <div class="grid cols-3 mb-2">
       <div class="flex justify-center space-x-4 mb-4">
@@ -172,9 +172,12 @@
 
 <script>
 import ExpenseForm from "./ExpenseForm.vue";
+import BarChart from "./BarChart.vue";
+
 export default {
   components: {
     ExpenseForm,
+    BarChart
   },
   data() {
     return {
@@ -189,6 +192,8 @@ export default {
         expense: null,
         action: "",
       },
+      categoryWiseExpenses:{},
+      chartKey: 0,
     };
   },
   methods: {
@@ -203,7 +208,10 @@ export default {
         })
         .then((response) => {
           this.expenses = response.data;
-          console.log(this.expenses);
+          // console.log(this.expenses);
+          this.categoryWiseExpenses = this.getCategoryWiseExpense(this.expenses);
+          this.chartKey++;
+          // console.log(this.categoryWiseExpenses);
         })
         .catch((error) => {
           console.error("Error fetching expenses:", error);
@@ -277,6 +285,23 @@ export default {
         this.isModalOpen = true;
       }
     },
+
+    getCategoryWiseExpense(expenses){
+      // console.log(expenses);
+     return expenses.reduce((accumilator , expense) => {
+      const category = expense.category.category;
+
+      const amount = parseFloat(expense.amount)
+
+      if(!accumilator[category]){
+        accumilator[category] = 0;
+      }
+      accumilator[category] += amount;
+      // console.log(accumilator);
+      return accumilator;
+
+      }, {});
+    }
   },
   computed: {
     totalPages() {

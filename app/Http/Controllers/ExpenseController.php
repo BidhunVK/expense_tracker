@@ -28,7 +28,7 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        return view('expense.add-expense');
+       //
     }
 
     /**
