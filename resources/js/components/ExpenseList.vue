@@ -1,7 +1,7 @@
 <template>
   <div class="p-6">
     <h2 class="text-xl font-semibold mb-4">Expense List</h2>
-    <BarChart :category-wise-expenses="categoryWiseExpenses" :key="chartKey"/>
+    <BarChart :category-wise-expenses="categoryWiseExpenses" :key="chartKey" />
     <!-- Date Range Picker -->
     <div class="grid cols-3 mb-2">
       <div class="flex justify-center space-x-4 mb-4">
@@ -177,11 +177,11 @@ import BarChart from "./BarChart.vue";
 export default {
   components: {
     ExpenseForm,
-    BarChart
+    BarChart,
   },
   data() {
     return {
-        csrfToken: '',
+      csrfToken: "",
       startDate: "",
       endDate: "",
       expenses: [],
@@ -192,7 +192,7 @@ export default {
         expense: null,
         action: "",
       },
-      categoryWiseExpenses:{},
+      categoryWiseExpenses: {},
       chartKey: 0,
     };
   },
@@ -209,7 +209,9 @@ export default {
         .then((response) => {
           this.expenses = response.data;
           // console.log(this.expenses);
-          this.categoryWiseExpenses = this.getCategoryWiseExpense(this.expenses);
+          this.categoryWiseExpenses = this.getCategoryWiseExpense(
+            this.expenses
+          );
           this.chartKey++;
           // console.log(this.categoryWiseExpenses);
         })
@@ -252,15 +254,16 @@ export default {
 
     deleteExpense(expense_id) {
       let response = confirm("Are you sure to delete the expense?");
-        const headers = {
-      'X-CSRF-TOKEN': this.csrfToken
-    };
+      const headers = {
+        "X-CSRF-TOKEN": this.csrfToken,
+      };
       if (response) {
-        axios.delete(`expense/${expense_id}` , { headers }).then((response) => {
+        axios.delete(`expense/${expense_id}`, { headers }).then((response) => {
           const index = this.expenses.findIndex(
             (expense) => expense.id === expense_id
           );
           this.expenses.splice(index, 1);
+          this.chartKey++;
         });
       }
     },
@@ -286,22 +289,21 @@ export default {
       }
     },
 
-    getCategoryWiseExpense(expenses){
+    getCategoryWiseExpense(expenses) {
       // console.log(expenses);
-     return expenses.reduce((accumilator , expense) => {
-      const category = expense.category.category;
+      return expenses.reduce((accumilator, expense) => {
+        const category = expense.category.category;
 
-      const amount = parseFloat(expense.amount)
+        const amount = parseFloat(expense.amount);
 
-      if(!accumilator[category]){
-        accumilator[category] = 0;
-      }
-      accumilator[category] += amount;
-      // console.log(accumilator);
-      return accumilator;
-
+        if (!accumilator[category]) {
+          accumilator[category] = 0;
+        }
+        accumilator[category] += amount;
+        // console.log(accumilator);
+        return accumilator;
       }, {});
-    }
+    },
   },
   computed: {
     totalPages() {
@@ -316,7 +318,9 @@ export default {
   mounted() {
     this.fetchLatestMonthExpenses();
     // alert(this.csrfToken);
-    this.csrfToken = document.head.querySelector('meta[name="csrf-token"]').content;
+    this.csrfToken = document.head.querySelector(
+      'meta[name="csrf-token"]'
+    ).content;
   },
 };
 </script>

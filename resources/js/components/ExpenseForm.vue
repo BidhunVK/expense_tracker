@@ -89,7 +89,7 @@
               <button
                 class="bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
               >
-                {{ buttonText === 'add' ? 'Add Expense' : 'Update' }}
+                {{ buttonText === "add" ? "Add Expense" : "Update" }}
               </button>
             </div>
           </form>
@@ -101,19 +101,19 @@
 
 <script>
 export default {
-  props : {
-     expenseToBeEdited: {
+  props: {
+    expenseToBeEdited: {
       type: Object,
-      default: null
+      default: null,
     },
-     buttonText: {
+    buttonText: {
       type: String,
       required: true,
     },
-     csrfToken: {
+    csrfToken: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -122,7 +122,7 @@ export default {
         amount: null,
         description: "",
         date_of_expense: "",
-         _token:"",
+        _token: "",
       },
       categories: [],
       errors: {},
@@ -132,13 +132,12 @@ export default {
     this.fetchCategories();
 
     if (this.$props.expenseToBeEdited) {
-    // this.expenseToBeEdited = this.$props.expenseToBeEdited;
-    this.formData.category_id = this.expenseToBeEdited.category_id;
-    this.formData.amount = this.expenseToBeEdited.amount;
-    this.formData.description = this.expenseToBeEdited.description;
-    this.formData.date_of_expense = this.expenseToBeEdited.date_of_expense;
-  }
-
+      // this.expenseToBeEdited = this.$props.expenseToBeEdited;
+      this.formData.category_id = this.expenseToBeEdited.category_id;
+      this.formData.amount = this.expenseToBeEdited.amount;
+      this.formData.description = this.expenseToBeEdited.description;
+      this.formData.date_of_expense = this.expenseToBeEdited.date_of_expense;
+    }
   },
   methods: {
     async fetchCategories() {
@@ -163,24 +162,33 @@ export default {
         if (!this.formData.amount) {
           this.errors.amount = ["Please enter the amount."];
         }
-         if (this.formData.amount <= 0 || isNaN(this.formData.amount)) {
+        if (this.formData.amount <= 0 || isNaN(this.formData.amount)) {
           this.errors.amount = ["Please enter a valid amount."];
         }
         if (this.formData.description.length > 200) {
-          this.errors.description = ["Description should be less than 200 characters"];
+          this.errors.description = [
+            "Description should be less than 200 characters",
+          ];
         }
         if (!this.formData.date_of_expense) {
           this.errors.date_of_expense = ["Please select a date."];
+        } else {
+          const selectedDate = new Date(this.formData.date_of_expense);
+          const currentDate = new Date();
+
+          if (selectedDate > currentDate) {
+            this.errors.date_of_expense = ["Future date cannot be added"];
+          }
         }
 
-        if(Object.keys(this.errors).length>0){
+        if (Object.keys(this.errors).length > 0) {
           return;
         }
 
         let response;
-        if (this.buttonText === 'add') {
+        if (this.buttonText === "add") {
           response = await axios.post("/expense", this.formData);
-        } else if (this.buttonText === 'edit' && this.expenseToBeEdited) {
+        } else if (this.buttonText === "edit" && this.expenseToBeEdited) {
           const url = `/expense/${this.expenseToBeEdited.id}`;
           response = await axios.put(url, this.formData);
         }
@@ -188,7 +196,6 @@ export default {
         if (response && response.data && response.data.redirect) {
           window.location = response.data.redirect;
         }
-
       } catch (error) {
         if (error.response && error.response.status === 422) {
           this.errors = error.response.data.errors;
