@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ExpenseRequest;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Expense;
 
@@ -18,8 +19,21 @@ class ExpenseController extends Controller
     {
         $start_date = $request->input('start_date');
         $end_date = $request->input('end_date');
+        $category_id = $request->input('category');
 
-        $expenses = Expense::with('category')->where('user_id', Auth::id())->where('date_of_expense', '>=', $start_date)->where('date_of_expense', '<=', $end_date)->latest()->get();
+        $query = Expense::with('category')->where('user_id', Auth::id());
+
+        // $expenses = Expense::with('category')->where('user_id', Auth::id())->where('date_of_expense', '>=', $start_date)->where('date_of_expense', '<=', $end_date)->latest()->get();
+
+     
+        $query->where('date_of_expense', '>=', $start_date)->where('date_of_expense', '<=', $end_date);
+    
+        if ($category_id) {
+            $query->where('category_id', $category_id);
+        }
+    
+        $expenses = $query->orderBy('date_of_expense', 'desc')->get();
+
         return response()->json($expenses);
     }
 

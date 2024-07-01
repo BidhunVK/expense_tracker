@@ -30,6 +30,20 @@
             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
         </div>
+
+         <div class="px-2">
+          <label for="category" class="block text-sm font-medium text-gray-700">Category:</label>
+          <select
+            id="category"
+            v-model="selectedCategory"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          >
+            <option value="">All Categories</option>
+            <option v-for="category in categories" :key="category.id" :value="category.id">
+              {{ category.category }}
+            </option>
+          </select>
+        </div>
       </div>
       <button
         @click="fetchExpenses"
@@ -197,6 +211,7 @@ export default {
       categoryWiseExpenses: {},
       chartKey: 0,
       categories:[],
+      selectedCategory: "",
     };
   },
   methods: {
@@ -204,11 +219,13 @@ export default {
       // Assuming you're using Axios for HTTP requests
       //  const auth_token = sessionStorage.getItem('auth_token');
       //  alert(auth_token);
+      // alert(this.selectedCategory);
       axios
         .get("/expense", {
           params: {
             start_date: this.startDate,
             end_date: this.endDate,
+            category: this.selectedCategory
           },
         })
         .then((response) => {
@@ -332,12 +349,12 @@ export default {
     },
   },
   mounted() {
-    this.fetchLatestMonthExpenses();
+  
     this.fetchCategories();
-    // alert(this.csrfToken);
     this.csrfToken = document.head.querySelector(
       'meta[name="csrf-token"]'
     ).content;
+        this.fetchLatestMonthExpenses();
   },
 };
 </script>

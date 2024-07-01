@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        Category::factory()->count(12)->create();
+        // Category::factory()->count(12)->create();
 
         // User::factory()->create([
         //     'name' => 'Test User',
