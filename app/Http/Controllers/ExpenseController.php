@@ -87,6 +87,9 @@ class ExpenseController extends Controller
      */
     public function update(ExpenseRequest $request, Expense $expense)
     {
+        if (Auth::id() !== $expense->user_id) {
+            return response()->json(['error' => 'Unauthorized access'], 403);
+        }
         try {
             $expense->update([
                 'category_id' => $request->category_id,
@@ -108,6 +111,10 @@ class ExpenseController extends Controller
      */
     public function destroy(Expense $expense)
     {
+        if (Auth::id() !== $expense->user_id) {
+            return response()->json(['error' => 'Unauthorized access'], 403);
+        }
+        
         $expense->delete();
 
         return response()->json(['message' => 'Expense deleted successfully'], 200);
