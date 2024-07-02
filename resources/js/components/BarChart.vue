@@ -36,7 +36,7 @@ export default {
     categoryWiseExpenses: {
       type: Object,
       required: true,
-      default: () =>{}
+      default: () => {},
     },
   },
   watch: {
@@ -69,24 +69,37 @@ export default {
           y: { grid: { display: false } },
         },
       },
+      defaultColors: [
+        "hsl(0 , 70%, 50%)",
+        "hsl(60 , 70%, 50%)",
+        "hsl(120 , 70%, 50%)",
+        "hsl(180 , 70%, 50%)",
+        "hsl(240 , 70%, 50%)",
+        "hsl(300 , 70%, 50%)",
+        "hsl(360 , 70%, 50%)",
+      ],
     };
   },
-  methods:{
-     updateChartData(data) {
-    const labels = Object.keys(data);
-    const amounts = Object.values(data);
-    const colors = labels.map((_, index) => `hsl(${index * 60}, 70%, 50%)`);
+  methods: {
+    updateChartData(data) {
+      const labels = Object.keys(data);
+      const amounts = Object.values(data);
 
-    this.chartData.labels = labels;
-    this.chartData.datasets[0].data = amounts;
-    this.chartData.datasets[0].backgroundColor = colors;
-  }
+      const colors = labels.map((_, index) => {
+        const colorIndex = index % this.defaultColors.length;
+        return this.defaultColors[colorIndex];
+      });
+
+      this.chartData.labels = labels;
+      this.chartData.datasets[0].data = amounts;
+      this.chartData.datasets[0].backgroundColor = colors;
+    },
   },
-  mounted(){
+  mounted() {
     console.log(this.$props);
     // this.categoryWiseExpenses = this.$props.categoryWiseExpenses;
     // this.updateChartData(this.categoryWiseExpenses);
-  }
+  },
 };
 </script>
 
